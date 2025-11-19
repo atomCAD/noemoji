@@ -1,0 +1,27 @@
+# Markdownlint configuration
+# Documentation: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+
+# MD013/line-length - Line length (disabled)
+MD013: false
+
+# MD036/no-emphasis-as-heading - Emphasis used instead of a heading
+MD036:
+  # Punctuation characters at end of emphasis lines to allow
+  # We allow ":" for labels and warnings that need semantic emphasis
+  punctuation: ".,;:!?。，；：！？"
+
+# MD033/no-inline-html - Inline HTML
+# Allow specific XML tags used for AI agent instructions and examples
+MD033:
+  # Allow specific elements used in documentation and AI agent instructions
+  allowed_elements:
+    - "bad-example"
+    - "good-example"
+    - "date"
+    - "token"
+    - "system-reminder"
+    - "user"
+    - "assistant"
+    - "example"
+    - "reasoning"
+    - "commentary"
