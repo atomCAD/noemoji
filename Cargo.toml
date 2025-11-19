@@ -1,0 +1,10 @@
+[package]
+name = "noemoji"
+version = "0.1.0"
+authors = ["Mark Friedenbach <mark@friedenbach.org>"]
+description = "Unicode compliance linter that removes obvious AI authorship signatures"
+repository = "https://github.com/atomCAD/noemoji"
+license = "MPL-2.0"
+edition = "2024"
+
+[dependencies]
