@@ -45,4 +45,6 @@
 //!
 //! Good documentation looks like a human wrote it. When in doubt, use ASCII.
 
+pub mod cli;
+
 // EOF
