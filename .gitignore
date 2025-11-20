@@ -1,2 +1,6 @@
 # Rust build artifacts
 /target/
+
+# AI agent files
+.claude
+CLAUDE.md
