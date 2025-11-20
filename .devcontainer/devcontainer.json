@@ -1,0 +1,81 @@
+// Note: Proper JSON does not support comments like this,
+// but Dev Containers allows comments in its config files.
+// Dev Containers does not recognize the .jsonc extension.
+
+{
+  "name": "Devcontainer for Claude Code - noemoji",
+  // Use Microsoft's base devcontainer image
+  // POLICY: DO NOT PIN VERSION - We want automatic updates from Microsoft's trusted base image
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "features": {
+    // Git for workspace/repository version control
+    "ghcr.io/devcontainers/features/git:1": {},
+    // NodeJS to run Claude Code
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "24"
+    },
+    // Claude uses docker for running analysis tools
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "enableNonRootDocker": "true",
+      "moby": "false",
+      "dockerDashComposeVersion": "v2"
+    },
+    // Rust programming language support
+    "ghcr.io/devcontainers/features/rust:1": {
+      "version": "latest",
+      "profile": "default"
+    },
+    // jq, yq, and similar tools
+    "ghcr.io/eitsupi/devcontainer-features/jq-likes:2": {
+      "jqVersion": "latest",
+      "yqVersion": "latest"
+    },
+    // Markdown linting
+    "ghcr.io/devcontainers-extra/features/markdownlint-cli2:1": {},
+    // Shell linting
+    "ghcr.io/lukewiwa/features/shellcheck:0": {}
+  },
+  "runArgs": [
+    // Security hardening
+    "--security-opt=no-new-privileges:true",
+    "--cap-drop=ALL",
+    // Resource limits - prevents container from consuming all host resources
+    // Customize via environment variables if needed:
+    // DEVCONTAINER_MEMORY=12g DEVCONTAINER_CPUS=6 code .
+    // memory: RAM allocated to the container
+    "--memory=${localEnv:DEVCONTAINER_MEMORY:8g}",
+    // memory-swap: Total RAM + Swap (25% swap buffer = 8GB + 2GB)
+    "--memory-swap=${localEnv:DEVCONTAINER_MEMORY_SWAP:10g}",
+    // cpus: Number of CPU cores
+    "--cpus=${localEnv:DEVCONTAINER_CPUS:2}",
+    // pids-limit: Maximum number of processes
+    "--pids-limit=${localEnv:DEVCONTAINER_PIDS_LIMIT:1024}",
+    // Bind mount for Claude configuration (git-clean-proof location)
+    "--mount=type=bind,source=${localWorkspaceFolder}/.git/.config/claude,target=/home/vscode/.claude",
+    // Bind mount for shell history (git-clean-proof location)
+    "--mount=type=bind,source=${localWorkspaceFolder}/.git/.config/history,target=/home/vscode/.history"
+  ],
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code", // Claude Code integration for VS Code
+        "davidanson.vscode-markdownlint", // Markdown linting
+        "ms-azuretools.vscode-containers", // Docker container support
+        "mutantdino.resourcemonitor", // Monitor container resource usage
+        "rust-lang.rust-analyzer", // Rust language server for code completion, analysis
+        "tamasfe.even-better-toml" // Enhanced TOML support for Cargo.toml files
+      ]
+    }
+  },
+  "forwardPorts": [],
+  // Create Claude config directory before container starts (for bind mount)
+  "initializeCommand": "mkdir -p ${localWorkspaceFolder}/.git/.config/claude && mkdir -p ${localWorkspaceFolder}/.git/.config/history",
+  // Note: Claude Code is intentionally installed without version pinning - it auto-updates regardless.
+  "postCreateCommand": "sh .devcontainer/post-create-command.sh"
+}
