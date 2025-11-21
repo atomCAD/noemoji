@@ -189,23 +189,14 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
   - Add header comment block to src/lib.rs
   - Verify headers include required MPL-2.0 notice and copyright
 
-- [ ] Create custom error type foundation
-  - Write tests for error type display formatting
-  - Write tests for each error variant (Config, Io, Parse, Unicode)
-  - Write tests for error source chain preservation
-  - Create NomojiError enum with comprehensive error categories
-  - Implement Display trait for human-readable error messages
-  - Implement std::error::Error trait with source() support
-  - Verify error messages are clear and actionable for users
-
-- [ ] Add error conversion utilities
-  - Write tests for converting std::io::Error to NomojiError
-  - Write tests for converting serde errors to NomojiError
-  - Write tests for error context preservation during conversion
-  - Implement From<std::io::Error> for NomojiError
-  - Implement From<toml::de::Error> for NomojiError
-  - Add From implementations for other common error types
-  - Verify error conversion preserves stack trace and context
+- [ ] Add CLI argument parsing with error handling
+  - Add lexopt dependency to Cargo.toml
+  - Create CLI argument parsing structure in main.rs
+  - Write tests for argument parsing success cases
+  - Write tests for invalid argument error handling
+  - Create CliError type for argument parsing errors
+  - Implement Display trait for clear CLI error messages
+  - Verify error messages guide users to correct usage
 
 - [ ] Add logging infrastructure
   - Write tests for log output at different levels (error, warn, info, debug)
@@ -222,14 +213,14 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
   - Add serde dependency with derive feature to Cargo.toml
   - Add toml dependency to Cargo.toml
   - Create Config struct with serde Deserialize trait
+  - Create ConfigError type for TOML parsing and validation errors
+  - Implement From<toml::de::Error> for ConfigError conversion
   - Implement load_config() function for hierarchical file discovery
-  - Verify TOML parsing integrates with custom error types
+  - Verify error messages provide actionable guidance for fixing TOML issues
 
 - [ ] Implement --help flag with lexopt
   - Write tests for --help flag output format and content
   - Write tests for help text accuracy and completeness
-  - Add lexopt dependency to Cargo.toml
-  - Create basic CLI argument parsing structure in main.rs
   - Implement --help flag with usage examples and flag descriptions
   - Verify help text displays correctly and is user-friendly
 
