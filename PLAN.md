@@ -163,7 +163,7 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
   - Create src/lib.rs with basic module structure
   - Verify `cargo build` succeeds without errors
 
-- [ ] Create .gitignore for Rust project
+- [x] Create .gitignore for Rust project
   - Create .gitignore with Rust-specific patterns (target/)
   - Add editor-specific patterns (.vscode/, .idea/, *.swp)
   - Add OS-specific patterns (.DS_Store, Thumbs.db)
