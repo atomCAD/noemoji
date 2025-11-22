@@ -224,7 +224,7 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
   - Implement --help flag with usage examples and flag descriptions
   - Verify help text displays correctly and is user-friendly
 
-- [ ] Implement --version flag with lexopt
+- [x] Implement --version flag with lexopt
   - Write tests for --version flag output format
   - Write tests for version information accuracy
   - Extend CLI argument parsing to handle --version flag

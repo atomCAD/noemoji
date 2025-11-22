@@ -59,6 +59,15 @@ fn version_short_flag_shows_version() {
 }
 
 #[test]
+fn version_output_format_is_standard() {
+    let mut cmd = Command::new(cargo::cargo_bin!("noemoji"));
+    cmd.arg("--version")
+        .assert()
+        .success()
+        .stdout(predicates::str::is_match(r"^noemoji \d+\.\d+\.\d+").unwrap());
+}
+
+#[test]
 fn with_args_exits_success() {
     let mut cmd = Command::new(cargo::cargo_bin!("noemoji"));
     // Use Cargo.toml as a test file since we know it exists
