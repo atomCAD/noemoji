@@ -256,13 +256,6 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
   - Add pull request and issue templates guidance
   - Verify documentation is comprehensive for new contributors
 
-- [ ] Configure rustfmt for code formatting
-  - Create rustfmt.toml with project style preferences
-  - Set tab_spaces=4, max_width=100, edition="2024"
-  - Configure import ordering and formatting rules
-  - Add rustfmt configuration for consistent code style
-  - Verify `cargo fmt --check` runs successfully on existing code
-
 - [ ] Configure clippy for linting
   - Create .clippy.toml with linter rules configuration
   - Enable recommended lints for CLI applications
