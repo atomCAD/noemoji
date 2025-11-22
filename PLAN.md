@@ -245,7 +245,6 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
   - Add instructions for proper license header inclusion
   - Specify dependency license compatibility requirements
   - Include code style guidelines (rustfmt, clippy)
-  - Add pull request and issue templates guidance
   - Verify documentation is comprehensive for new contributors
 
 - [ ] Configure clippy for linting
