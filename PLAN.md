@@ -173,7 +173,7 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
   - Set description to "A Rust CLI tool for enforcing ASCII-first typography guidelines"
   - Set license to "MPL-2.0"
   - Set version to "0.1.0"
-  - Set edition to "2021"
+  - Set edition to "2024"
   - Add authors field with project maintainer
   - Verify `cargo metadata` returns expected metadata values
 
@@ -258,7 +258,7 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
 
 - [ ] Configure rustfmt for code formatting
   - Create rustfmt.toml with project style preferences
-  - Set tab_spaces=4, max_width=100, edition="2021"
+  - Set tab_spaces=4, max_width=100, edition="2024"
   - Configure import ordering and formatting rules
   - Add rustfmt configuration for consistent code style
   - Verify `cargo fmt --check` runs successfully on existing code
