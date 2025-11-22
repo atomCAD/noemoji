@@ -8,6 +8,11 @@ use noemoji::cli::{CliCommand, CliError, parse_args, print_help, print_version, 
 
 fn main() -> ExitCode {
     let args: Vec<String> = env::args().collect();
+    let program = program_name(&args[0]);
+    match noemoji::logging::init_logger(program) {
+        Ok(()) => log::debug!("logger initialized"),
+        Err(_) => log::debug!("logger already initialized"),
+    }
 
     match parse_args(&args[1..]) {
         Ok(CliCommand::Help) => {

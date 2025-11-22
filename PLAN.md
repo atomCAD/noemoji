@@ -198,7 +198,7 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
   - Implement Display trait for clear CLI error messages
   - Verify error messages guide users to correct usage
 
-- [ ] Add logging infrastructure
+- [x] Add logging infrastructure
   - Write tests for log output at different levels (error, warn, info, debug)
   - Write tests for log format consistency
   - Add env_logger dependency to Cargo.toml
