@@ -189,7 +189,7 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
   - Add header comment block to src/lib.rs
   - Verify headers include required MPL-2.0 notice and copyright
 
-- [ ] Add CLI argument parsing with error handling
+- [x] Add CLI argument parsing with error handling
   - Add lexopt dependency to Cargo.toml
   - Create CLI argument parsing structure in main.rs
   - Write tests for argument parsing success cases

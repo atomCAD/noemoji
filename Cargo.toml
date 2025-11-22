@@ -8,6 +8,8 @@ license = "MPL-2.0"
 edition = "2024"
 
 [dependencies]
+lexopt = "0.3"
+thiserror = "2"
 
 [dev-dependencies]
 assert_cmd = "2"

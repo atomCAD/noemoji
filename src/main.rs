@@ -4,17 +4,36 @@
 
 use std::{env, process::ExitCode};
 
-use noemoji::cli::print_help;
+use noemoji::cli::{CliCommand, CliError, parse_args, print_help, print_version, program_name};
 
 fn main() -> ExitCode {
     let args: Vec<String> = env::args().collect();
 
-    if args.len() == 1 {
-        print_help(&args[0]);
-        return ExitCode::from(2);
+    match parse_args(&args[1..]) {
+        Ok(CliCommand::Help) => {
+            print_help(&args[0]);
+            ExitCode::SUCCESS
+        }
+        Ok(CliCommand::Version) => {
+            print_version();
+            ExitCode::SUCCESS
+        }
+        Ok(CliCommand::Check { .. }) => {
+            // TODO: Implement actual file checking logic
+            ExitCode::SUCCESS
+        }
+        Err(err) => {
+            match err {
+                CliError::NoFilesSpecified => print_help(&args[0]),
+                err => {
+                    let program = program_name(&args[0]);
+                    eprintln!("{}: {}", program, err);
+                    eprintln!("Try '{} --help' for more information.", program);
+                }
+            }
+            ExitCode::from(2)
+        }
     }
-
-    ExitCode::SUCCESS
 }
 
 // EOF
