@@ -232,14 +232,6 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
   - Include additional version info (build date, commit hash if available)
   - Verify version display follows standard CLI conventions
 
-- [ ] Document dependency selection rationale
-  - Create DEPENDENCIES.md file documenting library choices
-  - Document why lexopt was chosen over clap for CLI parsing
-  - Document why env_logger was chosen for logging
-  - Document why serde+toml was chosen for configuration
-  - Include evaluation criteria: binary size, compilation time, features
-  - Verify all dependencies are actively maintained and MPL-2.0 compatible
-
 - [ ] Create basic README stub
   - Create README.md with project title "noemoji-rs"
   - Add tagline: "A Rust CLI tool for enforcing ASCII-first typography guidelines"
