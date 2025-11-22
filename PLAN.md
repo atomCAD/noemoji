@@ -218,7 +218,7 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
   - Implement load_config() function for hierarchical file discovery
   - Verify error messages provide actionable guidance for fixing TOML issues
 
-- [ ] Implement --help flag with lexopt
+- [x] Implement --help flag with lexopt
   - Write tests for --help flag output format and content
   - Write tests for help text accuracy and completeness
   - Implement --help flag with usage examples and flag descriptions
