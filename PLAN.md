@@ -247,18 +247,22 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
   - Include code style guidelines (rustfmt, clippy)
   - Verify documentation is comprehensive for new contributors
 
-- [ ] Configure clippy for linting
-  - Create .clippy.toml with linter rules configuration
-  - Enable recommended lints for CLI applications
-  - Configure specific lints for Unicode handling code
-  - Set lint levels for pedantic and nursery lints
-  - Verify `cargo clippy --all-targets` runs without warnings
+- [ ] Create GitHub Actions workflow for CI validation
+  - Create .github/workflows/ directory structure
+  - Write tests for workflow file YAML syntax validation
+  - Create ci.yml workflow file for automated validation on push/PR events
+  - Configure workflow to execute ./check.sh script for all quality checks
+  - Include Rust toolchain setup (latest stable) with component installation
+  - Add build caching for dependencies to improve CI performance
+  - Configure test matrix for multi-platform testing (ubuntu-latest, macos-latest, windows-latest)
+  - Verify workflow YAML parses correctly and triggers on expected events
 
-- [ ] Set up GitHub Actions CI pipeline
-  - Create .github/workflows directory structure
-  - Create ci.yml workflow for automated testing on push/PR
-  - Add cargo test job with multiple Rust versions (stable, beta)
-  - Add cargo fmt --check job for code formatting validation
-  - Add cargo clippy job for linting with deny warnings
-  - Add cargo audit job for security vulnerability scanning
-  - Verify CI workflow runs successfully and catches quality issues
+- [ ] Test GitHub Actions CI pipeline with actual changes
+  - Write tests for CI pipeline behavior (success/failure scenarios)
+  - Create test commit that should pass all checks
+  - Create test commit that should fail quality checks (temporarily)
+  - Verify CI runs automatically on push to main branch
+  - Verify CI runs on pull request creation and updates
+  - Verify CI reports success/failure status correctly
+  - Verify CI build artifacts and logs are accessible
+  - Confirm CI environment can install required tools (markdownlint-cli2, shellcheck)
