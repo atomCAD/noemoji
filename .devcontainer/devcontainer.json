@@ -17,12 +17,6 @@
     "ghcr.io/devcontainers/features/node:1": {
       "version": "24"
     },
-    // Claude uses docker for running analysis tools
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {
-      "enableNonRootDocker": "true",
-      "moby": "false",
-      "dockerDashComposeVersion": "v2"
-    },
     // Rust programming language support
     "ghcr.io/devcontainers/features/rust:1": {
       "version": "latest",
@@ -66,7 +60,7 @@
       "extensions": [
         "anthropic.claude-code", // Claude Code integration for VS Code
         "davidanson.vscode-markdownlint", // Markdown linting
-        "ms-azuretools.vscode-containers", // Docker container support
+        "ms-azuretools.vscode-docker", // Docker/Dockerfile editing support
         "mutantdino.resourcemonitor", // Monitor container resource usage
         "rust-lang.rust-analyzer", // Rust language server for code completion, analysis
         "tamasfe.even-better-toml" // Enhanced TOML support for Cargo.toml files
