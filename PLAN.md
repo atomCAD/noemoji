@@ -1,6 +1,6 @@
 # Plan: Unicode Compliance Linter (noemoji-rs)
 
-A Rust-based command-line utility that enforces ASCII-first typography style guides in code and documentation, flagging decorative Unicode characters that detract from professional, clean code appearance. Prioritizes consistent style over avoiding false positives.
+A Rust-based unicode compliance linter that removes obvious AI authorship signatures - detects and flags emojis and decorative Unicode characters that AI assistants frequently insert, and which detract from professional, clean code appearance.
 
 ## Outcomes
 
@@ -232,11 +232,11 @@ A Rust-based command-line utility that enforces ASCII-first typography style gui
   - Include additional version info (build date, commit hash if available)
   - Verify version display follows standard CLI conventions
 
-- [ ] Create basic README stub
+- [x] Create basic README stub
   - Create README.md with project title "noemoji-rs"
-  - Add tagline: "A Rust CLI tool for enforcing ASCII-first typography guidelines"
+  - Add tagline from Cargo.toml description field
   - Add placeholder sections for Installation, Usage, Configuration, and License
-  - Include brief description of ASCII-first typography enforcement
+  - Include brief description expanding on Cargo.toml description
   - Add MPL-2.0 license badge and reference
   - Verify README renders correctly on GitHub
 
