@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read  # Required for actions/checkout and Swatinem/rust-cache
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: Test Suite
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install check.sh dependencies
+        run: |
+          npm install -g markdownlint-cli2
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get update && sudo apt-get install -y shellcheck
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            brew install shellcheck
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            choco install shellcheck
+          fi
+        shell: bash
+
+      - name: Run quality checks
+        run: ./check.sh
+        shell: bash
