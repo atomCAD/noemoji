@@ -1,6 +1,7 @@
 # noemoji-rs
 
 [![License: MPL-2.0](https://img.shields.io/badge/License-MPL--2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
+[![CI](https://github.com/atomCAD/noemoji/actions/workflows/ci.yml/badge.svg)](https://github.com/atomCAD/noemoji/actions/workflows/ci.yml)
 
 Unicode compliance linter that removes obvious AI authorship signatures
 
