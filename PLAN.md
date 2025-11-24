@@ -206,17 +206,48 @@ A Rust-based unicode compliance linter that removes obvious AI authorship signat
   - Create logging utility functions for CLI success/error messages
   - Verify logging works correctly with different verbosity levels
 
-- [ ] Add TOML configuration parsing support
+- [ ] Add Config struct
+  - Write tests for Config::default() providing sensible default values
+  - Create Config struct with field:
+    - log_level: Option<log::Level> (logging level from log crate, None=no logging)
+  - Implement Default trait (log_level: None)
+  - Verify Config struct fields and defaults work correctly
+
+- [ ] Add TOML parsing with ConfigError type
   - Write tests for parsing valid .noemoji.toml configuration
-  - Write tests for handling invalid TOML with descriptive error messages
-  - Write tests for Config struct deserialization
+  - Write tests for Config struct field deserialization (log_level)
+  - Write tests for ConfigError from invalid TOML (syntax errors, type mismatches)
+  - Write tests for ConfigError Display implementation with actionable messages
   - Add serde dependency with derive feature to Cargo.toml
   - Add toml dependency to Cargo.toml
-  - Create Config struct with serde Deserialize trait
+  - Add serde Deserialize trait to Config struct
   - Create ConfigError type for TOML parsing and validation errors
+  - Implement Display trait for ConfigError with user-friendly error formatting
   - Implement From<toml::de::Error> for ConfigError conversion
-  - Implement load_config() function for hierarchical file discovery
+  - Implement parse_config() function to parse TOML string into Config with error handling
+  - Verify Config correctly deserializes all supported fields
   - Verify error messages provide actionable guidance for fixing TOML issues
+
+- [ ] Implement hierarchical configuration file discovery
+  - Write tests for finding .noemoji.toml in current directory
+  - Write tests for searching parent directories up to filesystem root
+  - Write tests for handling missing configuration files (use Config::default())
+  - Write tests for handling file read errors (permissions, I/O errors)
+  - Implement load_config() function that discovers and loads configuration files
+  - Integrate file discovery with existing TOML parsing logic
+  - Verify hierarchical search works correctly across directory structures
+
+- [ ] Implement configuration merging with inheritance control
+  - Write tests for Config::or() with Option field precedence
+  - Write tests for Config::load() finding multiple configs
+  - Write tests for inherit = false stopping directory traversal
+  - Write tests for Config::default() as base when no configs found
+  - Write tests for partial configurations overriding base values
+  - Add inherit: bool field to Config struct with Default::default() = true
+  - Implement Config::or(self, other: Self) -> Self consuming method
+  - Implement Config::load(start_dir) that discovers and merges configs
+  - Verify merging applies configs from general to specific (child overrides parent)
+  - Verify inherit = false in any config stops further parent directory scanning
 
 - [x] Implement --help flag with lexopt
   - Write tests for --help flag output format and content
