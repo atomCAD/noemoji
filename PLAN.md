@@ -271,13 +271,6 @@ A Rust-based unicode compliance linter that removes obvious AI authorship signat
   - Add MPL-2.0 license badge and reference
   - Verify README renders correctly on GitHub
 
-- [ ] Create CONTRIBUTING.md with licensing requirements
-  - Document MPL-2.0 contributor requirements and DCO process
-  - Add instructions for proper license header inclusion
-  - Specify dependency license compatibility requirements
-  - Include code style guidelines (rustfmt, clippy)
-  - Verify documentation is comprehensive for new contributors
-
 - [x] Create GitHub Actions workflow for CI validation
   - Create .github/workflows/ directory structure
   - Write tests for workflow file YAML syntax validation
