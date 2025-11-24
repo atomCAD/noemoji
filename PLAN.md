@@ -263,6 +263,29 @@ A Rust-based unicode compliance linter that removes obvious AI authorship signat
   - Include additional version info (build date, commit hash if available)
   - Verify version display follows standard CLI conventions
 
+- [ ] Add stdin support for pipeline integration
+  - Write tests for reading from stdin when no file arguments provided
+  - Write tests for explicit `-` argument to read from stdin
+  - Write tests for mixing stdin with files (file1.txt - file2.txt)
+  - Write tests for processing stdin input with violations
+  - Write tests for handling stdin with empty input
+  - Write tests for error handling with invalid UTF-8 from stdin
+  - Extend CLI argument parsing to accept `-` as stdin placeholder
+  - Implement stdin reading in main.rs using io::stdin()
+  - Support both patterns: no args defaults to stdin, `-` explicitly requests stdin
+  - Verify stdin integration works with Unix pipelines (echo, cat, etc.)
+  - Update help text to document both stdin usage patterns
+
+- [ ] Implement ExitCode enum with Termination trait
+  - Write tests for ExitCode::Success returning 0
+  - Write tests for ExitCode::Violations returning 1
+  - Write tests for ExitCode::Error returning 2
+  - Define ExitCode enum in lib.rs with Success, Violations, Error variants
+  - Implement Termination trait for ExitCode to enable returning from main
+  - Update main.rs to return ExitCode instead of ()
+  - Verify exit codes work correctly with shell scripts ($?)
+  - Document exit codes in help text and README
+
 - [x] Create basic README stub
   - Create README.md with project title "noemoji-rs"
   - Add tagline from Cargo.toml description field
