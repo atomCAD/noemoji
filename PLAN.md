@@ -206,16 +206,29 @@ A Rust-based unicode compliance linter that removes obvious AI authorship signat
   - Create logging utility functions for CLI success/error messages
   - Verify logging works correctly with different verbosity levels
 
-- [ ] Add Config struct
-  - Write tests for Config::default() providing sensible default values
-  - Create Config struct with field:
-    - log_level: Option<log::Level> (logging level from log crate, None=no logging)
-  - Implement Default trait (log_level: None)
-  - Verify Config struct fields and defaults work correctly
+- [ ] Add LogLevel enum and wire into init_logger
+  - Create LogLevel enum (Disabled, Error, Warn, Info, Debug, Trace) in src/logging.rs
+  - Add LogLevel::to_level_filter() for conversion to log::LevelFilter
+  - Update init_logger to accept LogLevel parameter
+  - Write tests for LogLevel::to_level_filter() conversion
+
+- [ ] Add Config and LogConfig structs with pub fields
+  - Create LogConfig struct with `pub level: Option<LogLevel>` in src/config.rs
+  - Create Config struct with `pub log: LogConfig` in src/config.rs
+  - Implement Default trait for both (level: None = inherit/use default)
+  - Write tests for Config::default() and field access
+  - Update main.rs to use Config with `config.log.level.unwrap_or_default()`
+
+- [ ] Add NOEMOJI_LOG environment variable support
+  - Use env_logger's filter_or() to check NOEMOJI_LOG with fallback to RUST_LOG
+  - Support full env_logger filter syntax (module-level filtering)
+  - Write tests for NOEMOJI_LOG taking precedence over RUST_LOG
+  - Write tests for RUST_LOG fallback when NOEMOJI_LOG unset
+  - Default to off (silent) when neither env var is set
 
 - [ ] Add TOML parsing with ConfigError type
   - Write tests for parsing valid .noemoji.toml configuration
-  - Write tests for Config struct field deserialization (log_level)
+  - Write tests for Config struct field deserialization ([log] section with level)
   - Write tests for ConfigError from invalid TOML (syntax errors, type mismatches)
   - Write tests for ConfigError Display implementation with actionable messages
   - Add serde dependency with derive feature to Cargo.toml
