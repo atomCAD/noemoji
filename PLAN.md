@@ -212,7 +212,7 @@ A Rust-based unicode compliance linter that removes obvious AI authorship signat
   - Update init_logger to accept LogLevel parameter
   - Write tests for LogLevel::to_level_filter() conversion
 
-- [ ] Add Config and LogConfig structs with pub fields
+- [x] Add Config and LogConfig structs with pub fields
   - Create LogConfig struct with `pub level: Option<LogLevel>` in src/config.rs
   - Create Config struct with `pub log: LogConfig` in src/config.rs
   - Implement Default trait for both (level: None = inherit/use default)
