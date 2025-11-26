@@ -32,15 +32,13 @@ fn main() -> ExitCode {
             // TODO: Implement actual file checking logic
             ExitCode::SUCCESS
         }
+        Err(CliError::NoFilesSpecified) => {
+            print_help(&args[0]);
+            ExitCode::from(2)
+        }
         Err(err) => {
-            match err {
-                CliError::NoFilesSpecified => print_help(&args[0]),
-                err => {
-                    let program = program_name(&args[0]);
-                    eprintln!("{}: {}", program, err);
-                    eprintln!("Try '{} --help' for more information.", program);
-                }
-            }
+            eprintln!("{}: {}", program, err);
+            eprintln!("Try '{} --help' for more information.", program);
             ExitCode::from(2)
         }
     }
