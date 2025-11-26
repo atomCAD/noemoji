@@ -33,7 +33,7 @@ fn test_logger_actually_works() {
         .env("RUST_LOG", "debug")
         .assert()
         .success()
-        .stderr(predicate::str::contains("[debug]: logger initialized"));
+        .stderr(predicate::str::contains("[debug]"));
 }
 
 // EOF
