@@ -4,12 +4,15 @@
 
 use std::{env, process::ExitCode};
 
-use noemoji::cli::{CliCommand, CliError, parse_args, print_help, print_version, program_name};
+use noemoji::{
+    cli::{CliCommand, CliError, parse_args, print_help, print_version, program_name},
+    logging::{LogLevel, init_logger},
+};
 
 fn main() -> ExitCode {
     let args: Vec<String> = env::args().collect();
     let program = program_name(&args[0]);
-    match noemoji::logging::init_logger(program) {
+    match init_logger(program, LogLevel::Disabled) {
         Ok(()) => log::debug!("logger initialized"),
         Err(_) => log::debug!("logger already initialized"),
     }
