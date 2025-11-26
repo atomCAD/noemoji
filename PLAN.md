@@ -241,7 +241,7 @@ A Rust-based unicode compliance linter that removes obvious AI authorship signat
   - Verify Config correctly deserializes all supported fields
   - Verify error messages provide actionable guidance for fixing TOML issues
 
-- [ ] Implement hierarchical configuration file discovery
+- [x] Implement hierarchical configuration file discovery
   - Write tests for finding .noemoji.toml in current directory
   - Write tests for searching parent directories up to filesystem root
   - Write tests for handling missing configuration files (use Config::default())

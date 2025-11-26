@@ -6,6 +6,8 @@
 //!
 //! This module provides configuration structures and handling for the noemoji application.
 
+use std::{env, fs, io};
+
 use crate::logging::LogLevel;
 use serde::Deserialize;
 use thiserror::Error;
@@ -16,6 +18,9 @@ pub enum ConfigError {
     /// Invalid TOML syntax or structure
     #[error("Invalid TOML configuration: {0}")]
     InvalidToml(#[from] toml::de::Error),
+    /// File I/O error during configuration loading
+    #[error("I/O error while reading configuration: {0}")]
+    IoError(#[from] io::Error),
 }
 
 /// Logger configuration for noemoji.
@@ -65,6 +70,72 @@ pub struct Config {
 /// ```
 pub fn parse_config(toml_str: &str) -> Result<Config, ConfigError> {
     toml::from_str::<Config>(toml_str).map_err(ConfigError::InvalidToml)
+}
+
+/// Load configuration by searching for .noemoji.toml files hierarchically
+///
+/// Searches for .noemoji.toml starting from the current working directory and
+/// parent directories up to the filesystem root. Returns the first configuration
+/// file found, or a default configuration if none is found.
+///
+/// # Returns
+///
+/// Returns `Ok(Config)` with either the loaded configuration or default values,
+/// or `ConfigError` if a file is found but cannot be read or parsed.
+///
+/// # Example
+///
+/// ```rust,no_run
+/// # use noemoji::config::load_config;
+/// let config = load_config().unwrap();
+/// ```
+pub fn load_config() -> Result<Config, ConfigError> {
+    load_config_from(env::current_dir()?)
+}
+
+/// Load configuration by searching for .noemoji.toml files starting from a specific directory
+///
+/// Searches for .noemoji.toml in the given directory and parent directories
+/// up to the filesystem root. Returns the first configuration file found,
+/// or a default configuration if none is found.
+///
+/// # Arguments
+///
+/// * `start_dir` - The directory to start searching from
+///
+/// # Returns
+///
+/// Returns `Ok(Config)` with either the loaded configuration or default values,
+/// or `ConfigError` if a file is found but cannot be read or parsed.
+///
+/// # Example
+///
+/// ```rust,no_run
+/// # use noemoji::config::load_config_from;
+/// # use std::path::PathBuf;
+/// let config = load_config_from(PathBuf::from("/my/project")).unwrap();
+/// ```
+pub fn load_config_from(start_dir: std::path::PathBuf) -> Result<Config, ConfigError> {
+    let mut current_dir = start_dir;
+
+    loop {
+        let config_path = current_dir.join(".noemoji.toml");
+
+        // Check if config file exists
+        if config_path.exists() {
+            let content = fs::read_to_string(&config_path)?;
+            return parse_config(&content);
+        }
+
+        // Move to parent directory
+        match current_dir.parent() {
+            Some(parent) => current_dir = parent.to_path_buf(),
+            None => break, // Reached filesystem root
+        }
+    }
+
+    // No configuration file found, return default configuration
+    Ok(Config::default())
 }
 
 #[cfg(test)]

@@ -6,14 +6,14 @@ use std::env;
 
 use noemoji::{
     cli::{CliCommand, CliError, Outcome, parse_args, print_help, print_version, program_name},
-    config::Config,
+    config::load_config,
     logging::init_logger,
 };
 
 fn main() -> Outcome {
     let args: Vec<String> = env::args().collect();
     let program = program_name(&args[0]);
-    let config = Config::default();
+    let config = load_config().unwrap_or_default();
     match init_logger(program, config.log.level.unwrap_or_default()) {
         Ok(()) => log::debug!("logger initialized"),
         Err(_) => log::debug!("logger already initialized"),
