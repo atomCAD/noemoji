@@ -5,7 +5,7 @@
 //! Tests for logging infrastructure
 
 #[test]
-fn test_init_logger_idempotent() {
+fn init_logger_is_idempotent() {
     // Verify that init_logger can be called multiple times safely (but may error)
     // This tests the documented guarantee: "This function is idempotent"
     use noemoji::logging::{LogLevel, init_logger};
@@ -15,7 +15,7 @@ fn test_init_logger_idempotent() {
 }
 
 #[test]
-fn test_logger_actually_works() {
+fn logger_actually_works() {
     use assert_cmd::Command;
     use predicates::prelude::*;
 
