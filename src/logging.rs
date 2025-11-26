@@ -4,7 +4,10 @@
 
 //! Logging infrastructure for noemoji CLI
 
-use std::io::Write;
+use std::{io::Write, str::FromStr};
+
+use serde::{Deserialize, Deserializer};
+use thiserror::Error;
 
 /// Log verbosity level
 ///
@@ -37,6 +40,16 @@ pub enum LogLevel {
 }
 
 impl LogLevel {
+    /// Mapping table for FromStr implementation
+    const FROM_STR_MAPPINGS: &[(&[&str], LogLevel)] = &[
+        (&["off", "disabled", "none"], LogLevel::Disabled),
+        (&["error"], LogLevel::Error),
+        (&["warn", "warning"], LogLevel::Warn),
+        (&["info"], LogLevel::Info),
+        (&["debug"], LogLevel::Debug),
+        (&["trace"], LogLevel::Trace),
+    ];
+
     /// Convert to log::LevelFilter for use with logging infrastructure
     pub const fn to_level_filter(self) -> log::LevelFilter {
         match self {
@@ -47,6 +60,42 @@ impl LogLevel {
             Self::Debug => log::LevelFilter::Debug,
             Self::Trace => log::LevelFilter::Trace,
         }
+    }
+}
+
+/// Error returned when parsing an invalid log level string
+#[derive(Debug, Clone, PartialEq, Eq, Error)]
+#[error(
+    "invalid log level '{value}', expected: off/disabled/none, error, warn(ing), info, debug, or trace"
+)]
+pub struct ParseLogLevelError {
+    /// The invalid value that was provided
+    pub value: String,
+}
+
+impl std::str::FromStr for LogLevel {
+    type Err = ParseLogLevelError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        for (aliases, level) in Self::FROM_STR_MAPPINGS {
+            if aliases.iter().any(|a| s.eq_ignore_ascii_case(a)) {
+                return Ok(*level);
+            }
+        }
+
+        Err(ParseLogLevelError {
+            value: s.to_owned(),
+        })
+    }
+}
+
+impl<'de> Deserialize<'de> for LogLevel {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        LogLevel::from_str(&s).map_err(serde::de::Error::custom)
     }
 }
 
@@ -133,6 +182,40 @@ mod tests {
         assert_eq!(LogLevel::Info.to_level_filter(), log::LevelFilter::Info);
         assert_eq!(LogLevel::Debug.to_level_filter(), log::LevelFilter::Debug);
         assert_eq!(LogLevel::Trace.to_level_filter(), log::LevelFilter::Trace);
+    }
+
+    #[test]
+    fn from_str_accepts_canonical_names() {
+        assert_eq!("off".parse::<LogLevel>().unwrap(), LogLevel::Disabled);
+        assert_eq!("error".parse::<LogLevel>().unwrap(), LogLevel::Error);
+        assert_eq!("warn".parse::<LogLevel>().unwrap(), LogLevel::Warn);
+        assert_eq!("info".parse::<LogLevel>().unwrap(), LogLevel::Info);
+        assert_eq!("debug".parse::<LogLevel>().unwrap(), LogLevel::Debug);
+        assert_eq!("trace".parse::<LogLevel>().unwrap(), LogLevel::Trace);
+    }
+
+    #[test]
+    fn from_str_accepts_aliases() {
+        // "disabled" and "none" are aliases for "off"
+        assert_eq!("disabled".parse::<LogLevel>().unwrap(), LogLevel::Disabled);
+        assert_eq!("none".parse::<LogLevel>().unwrap(), LogLevel::Disabled);
+        // "warning" is an alias for "warn"
+        assert_eq!("warning".parse::<LogLevel>().unwrap(), LogLevel::Warn);
+    }
+
+    #[test]
+    fn from_str_is_case_insensitive() {
+        assert_eq!("DEBUG".parse::<LogLevel>().unwrap(), LogLevel::Debug);
+        assert_eq!("Debug".parse::<LogLevel>().unwrap(), LogLevel::Debug);
+        assert_eq!("WARNING".parse::<LogLevel>().unwrap(), LogLevel::Warn);
+    }
+
+    #[test]
+    fn from_str_rejects_invalid() {
+        let invalid = "garbage";
+        let err = invalid.parse::<LogLevel>().unwrap_err();
+        assert_eq!(err.value, invalid);
+        assert!(err.to_string().contains(invalid));
     }
 
     #[test]

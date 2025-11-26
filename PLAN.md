@@ -226,7 +226,7 @@ A Rust-based unicode compliance linter that removes obvious AI authorship signat
   - Write tests for RUST_LOG fallback when NOEMOJI_LOG unset
   - Default to off (silent) when neither env var is set
 
-- [ ] Add TOML parsing with ConfigError type
+- [x] Add TOML parsing with ConfigError type
   - Write tests for parsing valid .noemoji.toml configuration
   - Write tests for Config struct field deserialization ([log] section with level)
   - Write tests for ConfigError from invalid TOML (syntax errors, type mismatches)
