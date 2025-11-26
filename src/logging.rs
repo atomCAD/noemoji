@@ -128,6 +128,15 @@ mod tests {
         assert_eq!(LogLevel::Debug.to_level_filter(), log::LevelFilter::Debug);
         assert_eq!(LogLevel::Trace.to_level_filter(), log::LevelFilter::Trace);
     }
+
+    #[test]
+    fn init_logger_is_idempotent() {
+        // Verify that init_logger can be called multiple times safely (but may error)
+        // This tests the documented guarantee: "This function is idempotent"
+        let _ = init_logger("noemoji", LogLevel::Disabled);
+        let _ = init_logger("noemoji", LogLevel::Debug);
+        let _ = init_logger("noemoji", LogLevel::Info);
+    }
 }
 
 // EOF

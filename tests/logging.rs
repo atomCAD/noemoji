@@ -2,17 +2,7 @@
 // If a copy of the MPL was not distributed with this file,
 // You can obtain one at <https://mozilla.org/MPL/2.0/>.
 
-//! Tests for logging infrastructure
-
-#[test]
-fn init_logger_is_idempotent() {
-    // Verify that init_logger can be called multiple times safely (but may error)
-    // This tests the documented guarantee: "This function is idempotent"
-    use noemoji::logging::{LogLevel, init_logger};
-    let _ = init_logger("noemoji", LogLevel::Disabled);
-    let _ = init_logger("noemoji", LogLevel::Debug);
-    let _ = init_logger("noemoji", LogLevel::Info);
-}
+//! Integration tests for logging infrastructure
 
 #[test]
 fn logger_actually_works() {
