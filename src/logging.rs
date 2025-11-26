@@ -9,15 +9,15 @@ use std::io::Write;
 /// Log verbosity level
 ///
 /// Used as the baseline filter level when no environment variable overrides it.
-/// For finer control (e.g., per-module filtering), use the `RUST_LOG`
-/// environment variables which support the full env_logger syntax:
+/// For finer control (e.g., per-module filtering), use the `NOEMOJI_LOG` or
+/// `RUST_LOG` environment variables which support the full env_logger syntax:
 ///
 /// ```bash
 /// # Simple level
-/// RUST_LOG=debug noemoji file.rs
+/// NOEMOJI_LOG=debug noemoji file.rs
 ///
 /// # Per-module filtering
-/// RUST_LOG=warn,noemoji::parser=trace noemoji file.rs
+/// NOEMOJI_LOG=warn,noemoji::parser=trace noemoji file.rs
 /// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum LogLevel {
@@ -53,14 +53,15 @@ impl LogLevel {
 /// Initialize the logger with optional config-based override
 ///
 /// Logging priority (highest to lowest):
-/// 1. `RUST_LOG` environment variable
-/// 2. `config_level` parameter
+/// 1. `NOEMOJI_LOG` environment variable
+/// 2. `RUST_LOG` environment variable
+/// 3. `config_level` parameter
 ///
-/// The `RUST_LOG` environment variables support the standard env_logger
-/// filter syntax including module-level filtering:
+/// Both environment variables support the standard env_logger filter syntax
+/// including module-level filtering:
 ///
 /// ```bash
-/// RUST_LOG=debug noemoji file.rs
+/// NOEMOJI_LOG=debug noemoji file.rs
 /// RUST_LOG=warn,noemoji::parser=trace noemoji file.rs
 /// ```
 ///
@@ -72,7 +73,8 @@ impl LogLevel {
 ///
 /// * `program_name` - The program name to display in log messages, typically
 ///   obtained from `crate::program_name(&args[0])`
-/// * `config_level` - Log level from config file; ignored if `RUST_LOG` is set
+/// * `config_level` - Log level from config file; ignored if `NOEMOJI_LOG`
+///   or `RUST_LOG` is set
 ///
 /// # Returns
 ///
@@ -100,19 +102,23 @@ pub fn init_logger(program_name: &str, config_level: LogLevel) -> Result<(), log
     let program_name = program_name.to_owned();
     let default_level = config_level.to_level_filter();
 
-    env_logger::Builder::from_env(
-        env_logger::Env::default().default_filter_or(default_level.as_str()),
-    )
-    .format(move |buf, record| {
-        writeln!(
-            buf,
-            "{}[{}]: {}",
-            program_name,
-            record.level().to_string().to_lowercase(),
-            record.args()
-        )
-    })
-    .try_init()
+    let env = if std::env::var("NOEMOJI_LOG").is_ok() {
+        env_logger::Env::new().filter_or("NOEMOJI_LOG", default_level.as_str())
+    } else {
+        env_logger::Env::default().default_filter_or(default_level.as_str())
+    };
+
+    env_logger::Builder::from_env(env)
+        .format(move |buf, record| {
+            writeln!(
+                buf,
+                "{}[{}]: {}",
+                program_name,
+                record.level().to_string().to_lowercase(),
+                record.args()
+            )
+        })
+        .try_init()
 }
 
 #[cfg(test)]

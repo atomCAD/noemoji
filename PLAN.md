@@ -219,7 +219,7 @@ A Rust-based unicode compliance linter that removes obvious AI authorship signat
   - Write tests for Config::default() and field access
   - Update main.rs to use Config with `config.log.level.unwrap_or_default()`
 
-- [ ] Add NOEMOJI_LOG environment variable support
+- [x] Add NOEMOJI_LOG environment variable support
   - Use env_logger's filter_or() to check NOEMOJI_LOG with fallback to RUST_LOG
   - Support full env_logger filter syntax (module-level filtering)
   - Write tests for NOEMOJI_LOG taking precedence over RUST_LOG
