@@ -2,15 +2,15 @@
 // If a copy of the MPL was not distributed with this file,
 // You can obtain one at <https://mozilla.org/MPL/2.0/>.
 
-use std::{env, process::ExitCode};
+use std::env;
 
 use noemoji::{
-    cli::{CliCommand, CliError, parse_args, print_help, print_version, program_name},
+    cli::{CliCommand, CliError, Outcome, parse_args, print_help, print_version, program_name},
     config::Config,
     logging::init_logger,
 };
 
-fn main() -> ExitCode {
+fn main() -> Outcome {
     let args: Vec<String> = env::args().collect();
     let program = program_name(&args[0]);
     let config = Config::default();
@@ -22,24 +22,24 @@ fn main() -> ExitCode {
     match parse_args(&args[1..]) {
         Ok(CliCommand::Help) => {
             print_help(&args[0]);
-            ExitCode::SUCCESS
+            Outcome::Success
         }
         Ok(CliCommand::Version) => {
             print_version();
-            ExitCode::SUCCESS
+            Outcome::Success
         }
         Ok(CliCommand::Check { .. }) => {
             // TODO: Implement actual file checking logic
-            ExitCode::SUCCESS
+            Outcome::Success
         }
         Err(CliError::NoFilesSpecified) => {
             print_help(&args[0]);
-            ExitCode::from(2)
+            Outcome::Error
         }
         Err(err) => {
             eprintln!("{}: {}", program, err);
             eprintln!("Try '{} --help' for more information.", program);
-            ExitCode::from(2)
+            Outcome::Error
         }
     }
 }

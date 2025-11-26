@@ -4,8 +4,11 @@
 
 //! Command-line interface parsing and help/version display
 
-use std::ffi::OsString;
-use std::path::{Path, PathBuf};
+use std::{
+    ffi::OsString,
+    path::{Path, PathBuf},
+    process::{ExitCode, Termination},
+};
 
 use thiserror::Error;
 
@@ -165,10 +168,65 @@ EXIT CODES:
     );
 }
 
+/// Outcome of running the linter, following Unix exit code conventions
+///
+/// The exit codes follow standard Unix conventions:
+/// - 0: Success (no issues found)
+/// - 1: Violations found (lint failures)
+/// - 2: Error (runtime/usage errors)
+///
+/// # Examples
+///
+/// ```
+/// use noemoji::cli::Outcome;
+///
+/// fn main() -> Outcome {
+///     // ... do work ...
+///     Outcome::Success
+/// }
+/// ```
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Outcome {
+    /// All files are compliant, no violations found
+    Success,
+    /// One or more files contain violations
+    Violations,
+    /// Error reading or processing files
+    Error,
+}
+
+impl Termination for Outcome {
+    fn report(self) -> ExitCode {
+        match self {
+            Outcome::Success => ExitCode::from(0),
+            Outcome::Violations => ExitCode::from(1),
+            Outcome::Error => ExitCode::from(2),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::ffi::OsString;
+
+    #[test]
+    fn outcome_success_returns_zero() {
+        let code = Outcome::Success.report();
+        assert_eq!(code, ExitCode::from(0));
+    }
+
+    #[test]
+    fn outcome_violations_returns_one() {
+        let code = Outcome::Violations.report();
+        assert_eq!(code, ExitCode::from(1));
+    }
+
+    #[test]
+    fn outcome_error_returns_two() {
+        let code = Outcome::Error.report();
+        assert_eq!(code, ExitCode::from(2));
+    }
 
     #[test]
     fn from_lexopt_unexpected_option() {

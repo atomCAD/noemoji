@@ -289,15 +289,15 @@ A Rust-based unicode compliance linter that removes obvious AI authorship signat
   - Verify stdin integration works with Unix pipelines (echo, cat, etc.)
   - Update help text to document both stdin usage patterns
 
-- [ ] Implement ExitCode enum with Termination trait
-  - Write tests for ExitCode::Success returning 0
-  - Write tests for ExitCode::Violations returning 1
-  - Write tests for ExitCode::Error returning 2
-  - Define ExitCode enum in lib.rs with Success, Violations, Error variants
-  - Implement Termination trait for ExitCode to enable returning from main
-  - Update main.rs to return ExitCode instead of ()
+- [x] Implement Outcome enum with Termination trait
+  - Write tests for Outcome::Success returning 0
+  - Write tests for Outcome::Violations returning 1
+  - Write tests for Outcome::Error returning 2
+  - Define Outcome enum in cli.rs with Success, Violations, Error variants
+  - Implement Termination trait for Outcome to enable returning from main
+  - Update main.rs to return Outcome instead of ()
   - Verify exit codes work correctly with shell scripts ($?)
-  - Document exit codes in help text and README
+  - Document exit codes in rustdoc comments
 
 - [x] Create basic README stub
   - Create README.md with project title "noemoji-rs"
