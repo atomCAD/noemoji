@@ -250,7 +250,7 @@ A Rust-based unicode compliance linter that removes obvious AI authorship signat
   - Integrate file discovery with existing TOML parsing logic
   - Verify hierarchical search works correctly across directory structures
 
-- [ ] Implement configuration merging with inheritance control
+- [x] Implement configuration merging with inheritance control
   - Write tests for Config::or() with Option field precedence
   - Write tests for Config::load() finding multiple configs
   - Write tests for inherit = false stopping directory traversal

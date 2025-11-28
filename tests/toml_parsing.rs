@@ -2,12 +2,24 @@
 // If a copy of the MPL was not distributed with this file,
 // You can obtain one at <https://mozilla.org/MPL/2.0/>.
 
-//! Tests for TOML parsing functionality
+//! Tests for TOML parsing functionality via the public Config API
+
+use std::{fs::File, io::Write};
 
 use noemoji::{
-    config::{Config, ConfigError, parse_config},
+    config::{Config, ConfigError},
     logging::LogLevel,
 };
+use tempfile::TempDir;
+
+fn load_config_from_toml(toml_str: &str) -> Result<Config, ConfigError> {
+    let temp_dir = TempDir::new().unwrap();
+    let config_path = temp_dir.path().join(".noemoji.toml");
+    let mut file = File::create(&config_path).unwrap();
+    write!(file, "{}", toml_str).unwrap();
+    drop(file);
+    Config::load_from(temp_dir.path())
+}
 
 #[test]
 fn parse_config_valid_toml_succeeds() {
@@ -16,14 +28,15 @@ fn parse_config_valid_toml_succeeds() {
         level = "debug"
     "#;
 
-    let config = parse_config(toml_str).unwrap();
+    let config = load_config_from_toml(toml_str).unwrap();
     assert_eq!(config.log.level, Some(LogLevel::Debug));
 }
 
 #[test]
 fn parse_config_empty_toml_uses_defaults() {
-    let config = parse_config("").unwrap();
-    assert_eq!(config, Config::default());
+    let config = load_config_from_toml("").unwrap();
+    assert_eq!(config.log.level, None);
+    assert!(config.inherit);
 }
 
 #[test]
@@ -33,7 +46,7 @@ fn parse_config_partial_log_section() {
         # level intentionally omitted
     "#;
 
-    let config = parse_config(toml_str).unwrap();
+    let config = load_config_from_toml(toml_str).unwrap();
     assert_eq!(config.log.level, None);
 }
 
@@ -56,7 +69,7 @@ fn parse_config_all_log_levels() {
         "#
         );
 
-        let config = parse_config(&toml_str).unwrap();
+        let config = load_config_from_toml(&toml_str).unwrap();
         assert_eq!(config.log.level, Some(expected_level));
     }
 }
@@ -68,7 +81,7 @@ fn parse_config_invalid_toml_syntax_returns_error() {
         level = "debug"
     "#;
 
-    let error = parse_config(toml_str).unwrap_err();
+    let error = load_config_from_toml(toml_str).unwrap_err();
     assert!(matches!(error, ConfigError::InvalidToml(_)));
 }
 
@@ -79,7 +92,7 @@ fn parse_config_invalid_log_level_returns_error() {
         level = "invalid"
     "#;
 
-    let error = parse_config(toml_str).unwrap_err();
+    let error = load_config_from_toml(toml_str).unwrap_err();
     assert!(matches!(error, ConfigError::InvalidToml(_)));
     assert!(error.to_string().contains("invalid"));
 }
@@ -91,7 +104,7 @@ fn parse_config_wrong_type_for_level_returns_error() {
         level = 42
     "#;
 
-    let error = parse_config(toml_str).unwrap_err();
+    let error = load_config_from_toml(toml_str).unwrap_err();
     assert!(matches!(error, ConfigError::InvalidToml(_)));
 }
 
@@ -102,7 +115,7 @@ fn config_error_display_mentions_toml() {
         level = "debug"
     "#;
 
-    let error = parse_config(toml_str).unwrap_err();
+    let error = load_config_from_toml(toml_str).unwrap_err();
     assert!(error.to_string().contains("TOML"));
 }
 

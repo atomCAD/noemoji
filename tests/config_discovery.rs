@@ -9,7 +9,7 @@ use std::{
     io::Write,
 };
 
-use noemoji::config::{Config, load_config_from};
+use noemoji::config::Config;
 use tempfile::TempDir;
 
 #[test]
@@ -21,7 +21,7 @@ fn load_config_finds_file_in_current_directory() {
     writeln!(file, "[log]").unwrap();
     writeln!(file, "level = \"debug\"").unwrap();
 
-    let result = load_config_from(temp_dir.path().to_path_buf());
+    let result = Config::load_from(temp_dir.path());
 
     assert!(result.is_ok());
     let config = result.unwrap();
@@ -42,7 +42,7 @@ fn load_config_searches_parent_directories() {
     let sub_dir = temp_dir.path().join("subdir");
     fs::create_dir(&sub_dir).unwrap();
 
-    let result = load_config_from(sub_dir);
+    let result = Config::load_from(sub_dir);
 
     assert!(result.is_ok());
     let config = result.unwrap();
@@ -63,7 +63,7 @@ fn load_config_searches_up_to_filesystem_root() {
     let deep_dir = temp_dir.path().join("a").join("b").join("c").join("d");
     fs::create_dir_all(&deep_dir).unwrap();
 
-    let result = load_config_from(deep_dir);
+    let result = Config::load_from(deep_dir);
 
     assert!(result.is_ok());
     let config = result.unwrap();
@@ -77,7 +77,7 @@ fn load_config_returns_default_when_no_file_found() {
     let sub_dir = temp_dir.path().join("no_config_here");
     fs::create_dir(&sub_dir).unwrap();
 
-    let result = load_config_from(sub_dir);
+    let result = Config::load_from(sub_dir);
 
     assert!(result.is_ok());
     let config = result.unwrap();
@@ -104,7 +104,7 @@ fn load_config_handles_permission_errors() {
         fs::set_permissions(&config_path, perms).unwrap();
     }
 
-    let result = load_config_from(temp_dir.path().to_path_buf());
+    let result = Config::load_from(temp_dir.path());
 
     // Restore permissions for cleanup
     {
@@ -130,7 +130,7 @@ fn load_config_handles_invalid_toml() {
     writeln!(file, "[log").unwrap(); // Missing closing bracket
     writeln!(file, "level = debug").unwrap(); // Missing quotes
 
-    let result = load_config_from(temp_dir.path().to_path_buf());
+    let result = Config::load_from(temp_dir.path());
 
     // Should return error for invalid TOML
     assert!(result.is_err());
@@ -154,7 +154,7 @@ fn load_config_prefers_closer_config_file() {
     writeln!(file, "[log]").unwrap();
     writeln!(file, "level = \"debug\"").unwrap();
 
-    let result = load_config_from(sub_dir);
+    let result = Config::load_from(sub_dir);
 
     assert!(result.is_ok());
     let config = result.unwrap();
