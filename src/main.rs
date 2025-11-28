@@ -5,7 +5,7 @@
 use std::env;
 
 use noemoji::{
-    cli::{CliCommand, CliError, Outcome, parse_args, print_help, print_version, program_name},
+    cli::{CliCommand, Outcome, parse_args, print_help, print_version, program_name},
     config::Config,
     logging::init_logger,
 };
@@ -33,16 +33,10 @@ fn main() -> Outcome {
             let mut has_errors = false;
 
             for input in &inputs {
-                let path = input.path();
+                let name = input.name();
 
                 match input.check(|line, col, ch| {
-                    println!(
-                        "{}:{}:{}: prohibited character '{}'",
-                        path.display(),
-                        line,
-                        col,
-                        ch
-                    );
+                    println!("{}:{}:{}: prohibited character '{}'", name, line, col, ch);
                 }) {
                     Ok(found) => {
                         if found {
@@ -63,10 +57,6 @@ fn main() -> Outcome {
             } else {
                 Outcome::Success
             }
-        }
-        Err(CliError::NoFilesSpecified) => {
-            print_help(&args[0]);
-            Outcome::Error
         }
         Err(err) => {
             eprintln!("{}: {}", program, err);

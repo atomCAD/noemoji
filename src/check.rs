@@ -5,9 +5,10 @@
 //! Input processing and Unicode compliance checking
 
 use std::{
+    borrow::Cow,
     fs::File,
     io::{self, BufRead, BufReader},
-    path::{Path, PathBuf},
+    path::PathBuf,
 };
 
 use thiserror::Error;
@@ -47,13 +48,16 @@ pub enum CheckError {
 pub enum InputSource {
     /// Read from a file
     File(PathBuf),
+    /// Read from stdin
+    Stdin,
 }
 
 impl InputSource {
-    /// Returns the path for this input source
-    pub fn path(&self) -> &Path {
+    /// Returns the display name for this input source
+    pub fn name(&self) -> Cow<'static, str> {
         match self {
-            InputSource::File(path) => path,
+            InputSource::File(path) => Cow::Owned(path.display().to_string()),
+            InputSource::Stdin => Cow::Borrowed("stdin"),
         }
     }
 
@@ -72,6 +76,10 @@ impl InputSource {
                     source,
                 })?;
                 check_reader(BufReader::new(file), on_violation)
+            }
+            InputSource::Stdin => {
+                let stdin = io::stdin().lock();
+                check_reader(stdin, on_violation)
             }
         }
     }

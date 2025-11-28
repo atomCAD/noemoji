@@ -7,13 +7,10 @@ use predicates::prelude::*;
 use std::process::Command;
 
 #[test]
-fn no_args_shows_usage() {
+fn no_args_reads_from_stdin() {
     let mut cmd = Command::new(cargo::cargo_bin!("noemoji"));
-    cmd.assert()
-        .failure()
-        .code(2)
-        .stdout(predicates::str::contains("USAGE:"))
-        .stdout(predicates::str::contains("<FILE>..."));
+    // No stdin provided, should still succeed (empty input)
+    cmd.assert().success();
 }
 
 #[test]

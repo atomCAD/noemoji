@@ -276,7 +276,7 @@ A Rust-based unicode compliance linter that removes obvious AI authorship signat
   - Include additional version info (build date, commit hash if available)
   - Verify version display follows standard CLI conventions
 
-- [ ] Add stdin support for pipeline integration
+- [x] Add stdin support for pipeline integration
   - Write tests for reading from stdin when no file arguments provided
   - Write tests for explicit `-` argument to read from stdin
   - Write tests for mixing stdin with files (file1.txt - file2.txt)

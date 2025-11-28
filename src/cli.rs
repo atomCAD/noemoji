@@ -42,10 +42,6 @@ pub enum CliError {
     #[error("invalid UTF-8 in argument: {}", .0.to_string_lossy())]
     InvalidUtf8Value(OsString),
 
-    /// No files were specified but files are required
-    #[error("no files specified")]
-    NoFilesSpecified,
-
     /// Internal error that should not occur in normal usage
     #[error("internal error (please report this bug): {0}")]
     InternalError(lexopt::Error),
@@ -106,14 +102,20 @@ pub fn parse_args(args: &[String]) -> Result<CliCommand, CliError> {
             Short('h') | Long("help") => return Ok(CliCommand::Help),
             Short('V') | Long("version") => return Ok(CliCommand::Version),
             Value(val) => {
-                inputs.push(InputSource::File(PathBuf::from(val)));
+                if val == "-" {
+                    // Explicit stdin request, preserving position in input list
+                    inputs.push(InputSource::Stdin);
+                } else {
+                    inputs.push(InputSource::File(PathBuf::from(val)));
+                }
             }
             _ => return Err(arg.unexpected().into()),
         }
     }
 
+    // If no inputs specified, default to reading from stdin
     if inputs.is_empty() {
-        return Err(CliError::NoFilesSpecified);
+        inputs.push(InputSource::Stdin);
     }
 
     Ok(CliCommand::Check { inputs })
@@ -149,10 +151,12 @@ pub fn print_help(args0: &str) {
         "Check files for problematic Unicode characters that should use ASCII equivalents
 
 USAGE:
-    {program} [OPTIONS] <FILE>...
+    {program} [OPTIONS] [FILE]...
 
 ARGS:
-    <FILE>...    One or more files to check for Unicode compliance
+    [FILE]...    Files to check for Unicode compliance
+                 If no files are specified, reads from stdin
+                 Use '-' to explicitly read from stdin
 
 OPTIONS:
     -h, --help       Show this help message and exit
@@ -162,6 +166,9 @@ EXAMPLES:
     {program} README.md
     {program} src/*.rs
     {program} docs/*.md **/*.rs
+    echo 'text' | {program}
+    {program} file1.txt - file2.txt
+    {program} < file.txt
 
 EXIT CODES:
     0    All files are compliant (success)
