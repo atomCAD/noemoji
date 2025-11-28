@@ -12,6 +12,8 @@ use std::{
 
 use thiserror::Error;
 
+use crate::check::InputSource;
+
 /// Error type for command line argument parsing
 #[derive(Debug, Error)]
 pub enum CliError {
@@ -80,10 +82,10 @@ pub enum CliCommand {
     Help,
     /// Show version information
     Version,
-    /// Process files for Unicode compliance checking
+    /// Process inputs for Unicode compliance checking
     Check {
-        /// Files to check
-        files: Vec<PathBuf>,
+        /// Input sources to check, in order of processing
+        inputs: Vec<InputSource>,
     },
 }
 
@@ -92,7 +94,7 @@ pub fn parse_args(args: &[String]) -> Result<CliCommand, CliError> {
     use lexopt::prelude::*;
 
     let mut parser = lexopt::Parser::from_args(args.iter().map(|s| s.as_str()));
-    let mut files = Vec::with_capacity(args.len());
+    let mut inputs = Vec::with_capacity(args.len());
 
     loop {
         let arg = match parser.next() {
@@ -104,17 +106,17 @@ pub fn parse_args(args: &[String]) -> Result<CliCommand, CliError> {
             Short('h') | Long("help") => return Ok(CliCommand::Help),
             Short('V') | Long("version") => return Ok(CliCommand::Version),
             Value(val) => {
-                files.push(PathBuf::from(val));
+                inputs.push(InputSource::File(PathBuf::from(val)));
             }
             _ => return Err(arg.unexpected().into()),
         }
     }
 
-    if files.is_empty() {
-        Err(CliError::NoFilesSpecified)
-    } else {
-        Ok(CliCommand::Check { files })
+    if inputs.is_empty() {
+        return Err(CliError::NoFilesSpecified);
     }
+
+    Ok(CliCommand::Check { inputs })
 }
 
 /// Print version information

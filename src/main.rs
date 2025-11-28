@@ -28,9 +28,41 @@ fn main() -> Outcome {
             print_version();
             Outcome::Success
         }
-        Ok(CliCommand::Check { .. }) => {
-            // TODO: Implement actual file checking logic
-            Outcome::Success
+        Ok(CliCommand::Check { inputs }) => {
+            let mut has_violations = false;
+            let mut has_errors = false;
+
+            for input in &inputs {
+                let path = input.path();
+
+                match input.check(|line, col, ch| {
+                    println!(
+                        "{}:{}:{}: prohibited character '{}'",
+                        path.display(),
+                        line,
+                        col,
+                        ch
+                    );
+                }) {
+                    Ok(found) => {
+                        if found {
+                            has_violations = true;
+                        }
+                    }
+                    Err(err) => {
+                        eprintln!("{}: {}", program, err);
+                        has_errors = true;
+                    }
+                }
+            }
+
+            if has_errors {
+                Outcome::Error
+            } else if has_violations {
+                Outcome::Violations
+            } else {
+                Outcome::Success
+            }
         }
         Err(CliError::NoFilesSpecified) => {
             print_help(&args[0]);

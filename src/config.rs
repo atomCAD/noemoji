@@ -12,9 +12,10 @@
 
 use std::{env, fs, io};
 
-use crate::logging::LogLevel;
 use serde::Deserialize;
 use thiserror::Error;
+
+use crate::logging::LogLevel;
 
 /// Configuration parsing and validation errors
 #[derive(Debug, Error)]
